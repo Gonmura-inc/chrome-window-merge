@@ -1,0 +1,17 @@
+# Development files
+.dev-color
+
+# Debug logs
+firebase-debug.log
+
+# Credentials/tokens
+token.json
+
+# Build artifacts
+*.zip
+
+# Promo materials
+promo-*.png
+promo-*.html
+screenshot-*.png
+screenshot.html

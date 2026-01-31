@@ -17,6 +17,30 @@ const TAB_POSITION = {
 };
 
 // ============================================================
+// PWAウィンドウ管理
+// ============================================================
+
+// PWAウィンドウIDを保持するSet
+const pwaWindowIds = new Set();
+
+/**
+ * Content Scriptからのメッセージを受信
+ */
+chrome.runtime.onMessage.addListener((message, sender) => {
+  if (message.type === 'PWA_DETECTED' && sender.tab) {
+    const windowId = sender.tab.windowId;
+    pwaWindowIds.add(windowId);
+  }
+});
+
+/**
+ * ウィンドウが閉じられたらPWAリストから削除
+ */
+chrome.windows.onRemoved.addListener((windowId) => {
+  pwaWindowIds.delete(windowId);
+});
+
+// ============================================================
 // イベントリスナー
 // ============================================================
 
@@ -51,6 +75,7 @@ async function executeMerge(targetWindowId) {
 
 /**
  * 統合元となるウィンドウ一覧を取得
+ * PWAウィンドウは除外される
  * @param {number} targetWindowId - 統合先ウィンドウID
  * @returns {Promise<chrome.windows.Window[]>}
  */
@@ -60,7 +85,8 @@ async function getSourceWindows(targetWindowId) {
 
   return allWindows.filter(w =>
     w.id !== targetWindowId &&
-    w.incognito === targetWindow.incognito
+    w.incognito === targetWindow.incognito &&
+    !pwaWindowIds.has(w.id)  // PWAウィンドウを除外
   );
 }
 
