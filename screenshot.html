@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Window Merge - Screenshot</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: #0f172a;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    .container {
+      width: 1280px;
+      height: 800px;
+      background: linear-gradient(160deg, #1e3a5f 0%, #1e40af 40%, #3b82f6 100%);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* 背景装飾 */
+    .container::before {
+      content: '';
+      position: absolute;
+      top: -30%;
+      right: -20%;
+      width: 60%;
+      height: 80%;
+      background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .container::after {
+      content: '';
+      position: absolute;
+      bottom: -20%;
+      left: -10%;
+      width: 50%;
+      height: 60%;
+      background: radial-gradient(circle, rgba(59,130,246,0.3) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    /* ヘッダー */
+    .header {
+      text-align: center;
+      padding: 50px 0 30px;
+      z-index: 1;
+    }
+
+    .header h1 {
+      font-size: 48px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 10px;
+      text-shadow: 0 2px 15px rgba(0,0,0,0.3);
+    }
+
+    .header p {
+      font-size: 22px;
+      color: rgba(255,255,255,0.85);
+    }
+
+    /* メインコンテンツ */
+    .main-content {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 60px;
+      padding: 0 80px;
+      z-index: 1;
+    }
+
+    /* 左側: 複数ウィンドウ */
+    .before-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .section-label {
+      font-size: 18px;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 10px;
+    }
+
+    .windows-stack {
+      position: relative;
+      width: 280px;
+      height: 320px;
+    }
+
+    .browser-window {
+      position: absolute;
+      width: 240px;
+      height: 160px;
+      background: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+      overflow: hidden;
+    }
+
+    .browser-window:nth-child(1) {
+      top: 0;
+      left: 0;
+      z-index: 1;
+    }
+
+    .browser-window:nth-child(2) {
+      top: 80px;
+      left: 40px;
+      z-index: 2;
+    }
+
+    .browser-window:nth-child(3) {
+      top: 160px;
+      left: 20px;
+      z-index: 3;
+    }
+
+    .browser-header {
+      height: 32px;
+      background: linear-gradient(180deg, #f3f4f6, #e5e7eb);
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      gap: 6px;
+    }
+
+    .browser-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .browser-dot.red { background: #ef4444; }
+    .browser-dot.yellow { background: #f59e0b; }
+    .browser-dot.green { background: #22c55e; }
+
+    .browser-tabs {
+      display: flex;
+      margin-left: 15px;
+      gap: 2px;
+    }
+
+    .browser-tab {
+      width: 60px;
+      height: 22px;
+      background: #ffffff;
+      border-radius: 6px 6px 0 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 8px;
+      color: #6b7280;
+    }
+
+    .browser-tab.active {
+      background: #3b82f6;
+      color: #ffffff;
+    }
+
+    .browser-tab.pinned {
+      width: 24px;
+      background: #fbbf24;
+    }
+
+    .browser-tab.group-blue { border-top: 3px solid #3b82f6; }
+    .browser-tab.group-green { border-top: 3px solid #22c55e; }
+    .browser-tab.group-orange { border-top: 3px solid #f97316; }
+
+    .browser-content {
+      height: calc(100% - 32px);
+      background: linear-gradient(135deg, #f9fafb, #f3f4f6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .content-placeholder {
+      width: 80%;
+      height: 60%;
+      background: linear-gradient(135deg, #e5e7eb, #d1d5db);
+      border-radius: 6px;
+    }
+
+    /* 中央: 矢印とショートカット */
+    .center-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
+    }
+
+    .arrow-container {
+      display: flex;
+      align-items: center;
+    }
+
+    .arrow-line {
+      width: 80px;
+      height: 6px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.5), #ffffff);
+      border-radius: 3px;
+    }
+
+    .arrow-head {
+      width: 0;
+      height: 0;
+      border-top: 18px solid transparent;
+      border-bottom: 18px solid transparent;
+      border-left: 24px solid #ffffff;
+      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
+    }
+
+    .shortcut-box {
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 12px;
+      padding: 20px 30px;
+      text-align: center;
+    }
+
+    .shortcut-label {
+      font-size: 14px;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 10px;
+    }
+
+    .shortcut-keys {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .key {
+      background: rgba(255,255,255,0.95);
+      color: #1e3a5f;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      box-shadow: 0 3px 0 rgba(0,0,0,0.2), 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .key-plus {
+      color: rgba(255,255,255,0.8);
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+    }
+
+    /* 右側: 統合されたウィンドウ */
+    .after-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .merged-window {
+      width: 320px;
+      height: 240px;
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 15px 50px rgba(0,0,0,0.4), 0 0 0 3px rgba(255,255,255,0.2);
+      overflow: hidden;
+    }
+
+    .merged-header {
+      height: 40px;
+      background: linear-gradient(180deg, #f3f4f6, #e5e7eb);
+      display: flex;
+      align-items: center;
+      padding: 0 14px;
+      gap: 8px;
+    }
+
+    .merged-tabs {
+      display: flex;
+      margin-left: 20px;
+      gap: 3px;
+      flex-wrap: wrap;
+      max-width: 240px;
+    }
+
+    .merged-tab {
+      height: 26px;
+      padding: 0 10px;
+      background: #ffffff;
+      border-radius: 6px 6px 0 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      color: #6b7280;
+    }
+
+    .merged-tab.pinned {
+      width: 26px;
+      padding: 0;
+    }
+
+    .merged-tab.pinned::before {
+      content: '📌';
+      font-size: 10px;
+    }
+
+    .tab-group {
+      display: flex;
+      gap: 1px;
+      background: transparent;
+      border-radius: 6px 6px 0 0;
+      overflow: hidden;
+    }
+
+    .tab-group.blue .merged-tab { border-top: 3px solid #3b82f6; background: #eff6ff; }
+    .tab-group.green .merged-tab { border-top: 3px solid #22c55e; background: #f0fdf4; }
+    .tab-group.orange .merged-tab { border-top: 3px solid #f97316; background: #fff7ed; }
+
+    .merged-content {
+      height: calc(100% - 40px);
+      background: linear-gradient(135deg, #f9fafb, #f3f4f6);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      padding: 20px;
+    }
+
+    .success-icon {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-size: 28px;
+      box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4);
+    }
+
+    .success-text {
+      font-size: 14px;
+      color: #374151;
+      font-weight: 500;
+    }
+
+    /* フッター: 機能説明 */
+    .footer {
+      padding: 40px 80px 50px;
+      z-index: 1;
+    }
+
+    .features {
+      display: flex;
+      justify-content: center;
+      gap: 60px;
+    }
+
+    .feature {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      padding: 18px 28px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .feature-icon {
+      width: 44px;
+      height: 44px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+
+    .feature-text {
+      color: #ffffff;
+      font-size: 17px;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- ヘッダー -->
+    <div class="header">
+      <h1>Window Merge</h1>
+      <p>散らばったウィンドウをワンクリックで統合</p>
+    </div>
+
+    <!-- メインコンテンツ -->
+    <div class="main-content">
+      <!-- 左側: 複数ウィンドウ -->
+      <div class="before-section">
+        <span class="section-label">複数のウィンドウ</span>
+        <div class="windows-stack">
+          <div class="browser-window">
+            <div class="browser-header">
+              <div class="browser-dot red"></div>
+              <div class="browser-dot yellow"></div>
+              <div class="browser-dot green"></div>
+              <div class="browser-tabs">
+                <div class="browser-tab pinned"></div>
+                <div class="browser-tab active">Tab 1</div>
+              </div>
+            </div>
+            <div class="browser-content">
+              <div class="content-placeholder"></div>
+            </div>
+          </div>
+
+          <div class="browser-window">
+            <div class="browser-header">
+              <div class="browser-dot red"></div>
+              <div class="browser-dot yellow"></div>
+              <div class="browser-dot green"></div>
+              <div class="browser-tabs">
+                <div class="browser-tab group-blue">Tab 2</div>
+                <div class="browser-tab group-blue">Tab 3</div>
+              </div>
+            </div>
+            <div class="browser-content">
+              <div class="content-placeholder"></div>
+            </div>
+          </div>
+
+          <div class="browser-window">
+            <div class="browser-header">
+              <div class="browser-dot red"></div>
+              <div class="browser-dot yellow"></div>
+              <div class="browser-dot green"></div>
+              <div class="browser-tabs">
+                <div class="browser-tab group-green">Tab 4</div>
+                <div class="browser-tab">Tab 5</div>
+              </div>
+            </div>
+            <div class="browser-content">
+              <div class="content-placeholder"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 中央: 矢印とショートカット -->
+      <div class="center-section">
+        <div class="arrow-container">
+          <div class="arrow-line"></div>
+          <div class="arrow-head"></div>
+        </div>
+
+        <div class="shortcut-box">
+          <div class="shortcut-label">ショートカットキー</div>
+          <div class="shortcut-keys">
+            <span class="key">Cmd</span>
+            <span class="key-plus">+</span>
+            <span class="key">Shift</span>
+            <span class="key-plus">+</span>
+            <span class="key">M</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 右側: 統合されたウィンドウ -->
+      <div class="after-section">
+        <span class="section-label">1つのウィンドウに統合</span>
+        <div class="merged-window">
+          <div class="merged-header">
+            <div class="browser-dot red"></div>
+            <div class="browser-dot yellow"></div>
+            <div class="browser-dot green"></div>
+            <div class="merged-tabs">
+              <div class="merged-tab pinned"></div>
+              <div class="tab-group blue">
+                <div class="merged-tab">Tab 1</div>
+                <div class="merged-tab">Tab 2</div>
+              </div>
+              <div class="tab-group green">
+                <div class="merged-tab">Tab 3</div>
+              </div>
+              <div class="merged-tab">Tab 4</div>
+            </div>
+          </div>
+          <div class="merged-content">
+            <div class="success-icon">✓</div>
+            <span class="success-text">全タブを統合しました</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- フッター: 機能説明 -->
+    <div class="footer">
+      <div class="features">
+        <div class="feature">
+          <div class="feature-icon">📌</div>
+          <span class="feature-text">ピン留めタブを保持</span>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">🗂️</div>
+          <span class="feature-text">タブグループを保持</span>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">⚡</div>
+          <span class="feature-text">ワンクリックで実行</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
