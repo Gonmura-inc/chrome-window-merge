@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- 背景 -->
+  <rect width="128" height="128" rx="16" fill="#4285F4"/>
+
+  <!-- 左のウィンドウ（小さめ） -->
+  <rect x="16" y="32" width="40" height="32" rx="4" fill="white" opacity="0.9"/>
+  <rect x="16" y="32" width="40" height="8" rx="4" fill="#EA4335"/>
+
+  <!-- 右のウィンドウ（小さめ） -->
+  <rect x="72" y="32" width="40" height="32" rx="4" fill="white" opacity="0.9"/>
+  <rect x="72" y="32" width="40" height="8" rx="4" fill="#FBBC05"/>
+
+  <!-- 矢印（下向き、統合を示す） -->
+  <path d="M64 70 L64 95 M50 82 L64 95 L78 82" stroke="white" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+
+  <!-- 下の統合されたウィンドウ -->
+  <rect x="24" y="88" width="80" height="8" rx="2" fill="white" opacity="0.6"/>
+</svg>

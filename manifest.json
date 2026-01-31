@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "Window Merge",
+  "version": "1.0.0",
+  "description": "複数のChromeウィンドウを1つにまとめる（タブグループ・ピン留め保持）",
+  "permissions": ["tabs", "tabGroups"],
+  "action": {
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    },
+    "default_title": "ウィンドウをまとめる (Ctrl+Shift+M)"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "commands": {
+    "merge-windows": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+M",
+        "mac": "Command+Shift+M"
+      },
+      "description": "全ウィンドウを現在のウィンドウに統合"
+    }
+  }
+}
