@@ -4,6 +4,15 @@
   "version": "1.0.0",
   "description": "複数のChromeウィンドウを1つにまとめる（タブグループ・ピン留め保持）",
   "permissions": ["tabs", "tabGroups"],
+  "commands": {
+    "merge-windows": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+M",
+        "mac": "Command+Shift+M"
+      },
+      "description": "ウィンドウをまとめる"
+    }
+  },
   "action": {
     "default_icon": {
       "16": "icons/icon16.png",
